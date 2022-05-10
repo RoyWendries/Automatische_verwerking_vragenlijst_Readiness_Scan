@@ -1,0 +1,4 @@
+- Add word couters
+- Add input dataset
+- Add filters for stopword and ect. (create a filter list)
+- 
