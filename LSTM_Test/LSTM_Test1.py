@@ -23,13 +23,15 @@ from keras.models import Sequential
 from keras.layers import Dense
 from keras.layers import LSTM
 from keras.layers import Embedding
-from keras.utils import pad_sequences
 from sklearn.model_selection import train_test_split
-from keras.preprocessing import sequence
+
+
 from keras.layers import BatchNormalization
 from AttentionLayer import AttentionWithContext
 from sklearn.model_selection import train_test_split
 from keras.layers import Bidirectional
+from keras.optimizers import Adam
+
 
 # Ignoring the warnings
 import warnings
@@ -38,8 +40,8 @@ warnings.filterwarnings('ignore')
 
 df = pd.read_json('MovieReactionDS_medium.json')
 df['output'] = df['output'].map({'negative': 0, 'positive': 1})
-X = df['input'].values
-y = df['output'].values
+X = df['input']
+y = df['output']
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.33)
 
@@ -48,6 +50,7 @@ stop_words = set(stopwords.words("english"))
 lemmatizer = WordNetLemmatizer()
 
 
+# cleaned text looks like shit potential problem here
 def clean_text(X):
     processed = []
     for text in X:
@@ -71,11 +74,12 @@ print(f'Number of rows & columns in X : {np.shape(X_train_final)}')
 print(f'Number of rows & columns in y : {np.shape(y)}')
 print(f'Number of categories in y : {len(np.unique(y))}')
 print(f'Categories in y : {np.unique(y)}')
+print(X_train_final)
 
-
+'''
 #Tokenization and Padding
 vocab_size = 60000
-maxlen = 250
+maxlen = 500
 encode_dim = 20
 batch_size = 32
 tokenizer = Tokenizer()
@@ -83,6 +87,7 @@ tokenizer.fit_on_texts(X_train_final)
 tokenized_word_list = tokenizer.texts_to_sequences(X_train_final)
 X_train_padded = pad_sequences(
     tokenized_word_list, maxlen=maxlen, padding='post')
+
 
 #EarlyStopping and ModelCheckpoint
 
@@ -102,8 +107,9 @@ model.add(Dropout(0.5))
 model.add(Dense(512))
 model.add(LeakyReLU(alpha=0.2))
 model.add(Dense(1, activation='sigmoid'))
+opt = Adam(learning_rate=1e-6)
 model.compile(loss='binary_crossentropy',
-              optimizer='adam', metrics=['accuracy'])
+              optimizer=opt, metrics=['accuracy'])
 model.summary()
 
 X_train_final2, X_val, y_train_final2, y_val = train_test_split(
@@ -126,3 +132,4 @@ y_pred = (prediction > 0.5)
 print('F1-score: ', (f1_score(y_pred, y_test)*100))
 print('Confusion matrix:')
 print(confusion_matrix(y_pred, y_test))
+'''
