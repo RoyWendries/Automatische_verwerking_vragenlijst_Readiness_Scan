@@ -9,7 +9,7 @@ import warnings
 warnings.filterwarnings('ignore')
 
 
-df = pd.read_json('MovieReactionDS_medium.json')
+df = pd.read_json('MovieReactionDS.json')
 df['output'] = df['output'].map({'negative': 0, 'positive': 1})
 
 batch_1 = df[:2000]
@@ -45,8 +45,10 @@ features = last_hidden_states[0][:, 0, :].numpy()
 labels = batch_1['output']
 train_features, test_features, train_labels, test_labels = train_test_split(
     features, labels)
+
+
 lr_clf = LogisticRegression()
 lr_clf.fit(train_features, train_labels)
-print(lr_clf.score(test_features, test_labels))
+print('Test Accuracy: ', lr_clf.score(test_features, test_labels))
 print(classification_report(test_labels,
                             lr_clf.predict(test_features)))
