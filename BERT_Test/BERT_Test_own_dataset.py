@@ -25,7 +25,7 @@ tokenizer = tokenizer_class.from_pretrained(pretrained_weights)
 model = model_class.from_pretrained(pretrained_weights)
 
 tokenized = batch_1['input'].apply(
-    (lambda x: tokenizer.encode(x, add_special_tokens=True, max_length=512)))
+    (lambda x: tokenizer.encode(x, add_special_tokens=True, max_length=128)))
 
 max_len = 0
 for i in tokenized.values:
