@@ -16,7 +16,7 @@ df['output'] = df['output'].map({'negative': 0, 'positive': 1})
 batches = []
 n = 0
 while n < 20:
-    batch = df.sample(300)
+    batch = df.sample(500)
     batches.append(batch)
     n += 1
 
@@ -31,8 +31,8 @@ model_class, tokenizer_class, pretrained_weights = (
 tokenizer = tokenizer_class.from_pretrained(pretrained_weights)
 model = model_class.from_pretrained(pretrained_weights)
 
-batch_1 = df.sample(300)
-
+batch_1 = df.sample(500)
+print('\nBatch: 1')
 tokenized = (batch_1['input'].apply(
     (lambda x: tokenizer.encode(x, add_special_tokens=True, max_length=512))))
 max_len = 0
@@ -53,7 +53,7 @@ features = last_hidden_states[0][:, 0, :].numpy()
 labels = batch_1['output']
 
 
-num = 1
+num = 2
 accuracy = []
 for batch in batches:
 
@@ -78,11 +78,8 @@ for batch in batches:
     feature = last_hidden_states[0][:, 0, :].numpy()
     label = batch['output']
 
-    print(feature, label)
-
     features = np.concatenate([features, feature])
     labels = np.concatenate([labels, label])
-    print(features, labels)
 
 train_features, test_features, train_labels, test_labels = train_test_split(
     features, labels, test_size=0.4)
@@ -91,19 +88,6 @@ lr_clf = LogisticRegression()
 lr_clf.fit(train_features, train_labels)
 print('Test Accuracy: ', lr_clf.score(test_features, test_labels))
 
-'''
-    lr_clf = SGDClassifier(loss="log")
-    lr_clf.partial_fit(train_features, train_labels,
-                       classes=np.unique(train_labels))
-    print('Test Accuracy: ', lr_clf.score(test_features, test_labels))
-    accuracy.append(lr_clf.score(test_features, test_labels))
 
-
-def Gem_Acc(list):
-    return sum(list) / len(list)
-
-
-print('Gemiddelde accuracy: ', Gem_Acc(accuracy))
-'''
 print(classification_report(test_labels,
                             lr_clf.predict(test_features)))
